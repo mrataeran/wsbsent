@@ -15,7 +15,7 @@ bibliography: references.bib
 ## Abstract
 
 This project investigates whether the sentiment of retail investor posts on
-r/wallstreetbets (WSB) — one of the internet's most prominent trading communities —
+r/wallstreetbets (WSB) ,  one of the internet's most prominent trading communities , 
 carries measurable predictive signal for S&P 100 and S&P 500 equity returns.
 Using a custom Python package (`wsbsent`), we collect post data via Reddit's
 public JSON API, apply VADER and TextBlob sentiment scorers, and align daily
@@ -34,7 +34,7 @@ The GameStop short squeeze of January 2021 brought r/wallstreetbets to
 mainstream attention, crystallizing the idea that coordinated retail investor
 sentiment could move institutional-grade assets. Since then, researchers and
 practitioners alike have asked whether the signal embedded in WSB chatter is
-economically meaningful or merely noise — a loud but ultimately uninformative
+economically meaningful or merely noise ,  a loud but ultimately uninformative
 expression of retail enthusiasm.
 
 This project operationalizes that question through a reproducible data science
@@ -161,7 +161,7 @@ to prevent data leakage.
 
 ### Descriptive Statistics
 
-WSB sentiment is predominantly positive — the distribution of VADER compound
+WSB sentiment is predominantly positive ,  the distribution of VADER compound
 scores is right-skewed, with a mean near +0.15. This is consistent with the
 community's culture of optimism and self-selection: bearish posts tend to
 receive fewer upvotes and less engagement. TextBlob polarity tracks VADER
@@ -188,8 +188,8 @@ relationship. Key findings:
   correlations in the negative-lag region, consistent with the hypothesis that
   WSB traders *react* to market moves more than they anticipate them.
 
-This asymmetry — stronger signal when returns lead sentiment than when
-sentiment leads returns — is consistent with @da2015sum and @swamy2019social,
+This asymmetry ,  stronger signal when returns lead sentiment than when
+sentiment leads returns ,  is consistent with @da2015sum and @swamy2019social,
 who find retail attention metrics to be lagging rather than leading indicators
 for large-cap indices.
 
@@ -276,8 +276,8 @@ returns. The `wsbsent` package provides modular tools for scraping, scoring,
 merging, and analyzing this data, and the interactive Streamlit app makes the
 analysis accessible without programming knowledge.
 
-Our core finding — that WSB sentiment exhibits modest contemporaneous
-correlation with returns but weak predictive power for future direction —
+Our core finding ,  that WSB sentiment exhibits modest contemporaneous
+correlation with returns but weak predictive power for future direction , 
 is consistent with the broader literature on retail investor attention and
 efficient markets. The pipeline itself, however, is a contribution: it enables
 researchers to rapidly prototype WSB-based sentiment studies without navigating
