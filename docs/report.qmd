@@ -1,7 +1,7 @@
 ---
 title: "Can Reddit's Loudest Traders Predict the Market?"
 subtitle: "Sentiment Analysis of r/wallstreetbets and Equity Return Prediction"
-author: "Ata Raeran"
+author: "Ata Eran, Vance Williams"
 date: "April 22, 2026"
 format:
   html:
