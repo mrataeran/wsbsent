@@ -1,0 +1,184 @@
+[
+  {
+    "objectID": "report.html",
+    "href": "report.html",
+    "title": "Can Reddit’s Loudest Traders Predict the Market?",
+    "section": "",
+    "text": "This project investigates whether the sentiment of retail investor posts on r/wallstreetbets (WSB) — one of the internet’s most prominent trading communities — carries measurable predictive signal for S&P 100 and S&P 500 equity returns. Using a custom Python package (wsbsent), we collect post data via Reddit’s public JSON API, apply VADER and TextBlob sentiment scorers, and align daily aggregated sentiment scores against historical index returns from Yahoo Finance. We test time-lagged Pearson correlations between sentiment and returns and train a logistic regression classifier to predict next-day market direction. Our findings suggest a modest, statistically marginal relationship between WSB sentiment and subsequent returns, consistent with existing literature on retail investor attention effects."
+  },
+  {
+    "objectID": "report.html#abstract",
+    "href": "report.html#abstract",
+    "title": "Can Reddit’s Loudest Traders Predict the Market?",
+    "section": "",
+    "text": "This project investigates whether the sentiment of retail investor posts on r/wallstreetbets (WSB) — one of the internet’s most prominent trading communities — carries measurable predictive signal for S&P 100 and S&P 500 equity returns. Using a custom Python package (wsbsent), we collect post data via Reddit’s public JSON API, apply VADER and TextBlob sentiment scorers, and align daily aggregated sentiment scores against historical index returns from Yahoo Finance. We test time-lagged Pearson correlations between sentiment and returns and train a logistic regression classifier to predict next-day market direction. Our findings suggest a modest, statistically marginal relationship between WSB sentiment and subsequent returns, consistent with existing literature on retail investor attention effects."
+  },
+  {
+    "objectID": "report.html#introduction",
+    "href": "report.html#introduction",
+    "title": "Can Reddit’s Loudest Traders Predict the Market?",
+    "section": "2 Introduction",
+    "text": "2 Introduction\nThe GameStop short squeeze of January 2021 brought r/wallstreetbets to mainstream attention, crystallizing the idea that coordinated retail investor sentiment could move institutional-grade assets. Since then, researchers and practitioners alike have asked whether the signal embedded in WSB chatter is economically meaningful or merely noise — a loud but ultimately uninformative expression of retail enthusiasm.\nThis project operationalizes that question through a reproducible data science pipeline. We collect raw post data from WSB, quantify its sentiment content using lexicon-based approaches (VADER and TextBlob), and evaluate the resulting scores as predictors of daily S&P 500 (^GSPC) and S&P 100 (^OEX) returns. The core analysis tests two hypotheses:\n\nCorrelation hypothesis: Daily WSB sentiment is positively correlated with same-day or subsequent equity returns.\nPredictability hypothesis: Lagged sentiment features can improve binary classification of next-day market direction (bullish vs. bearish) above the naive majority-class baseline."
+  },
+  {
+    "objectID": "report.html#data",
+    "href": "report.html#data",
+    "title": "Can Reddit’s Loudest Traders Predict the Market?",
+    "section": "3 Data",
+    "text": "3 Data\n\n3.1 r/wallstreetbets Posts\nPost data was collected using Reddit’s public JSON API endpoint (reddit.com/r/wallstreetbets/{sort}.json), which allows paginated access to the 1,000 most recent posts in any subreddit without OAuth credentials. This approach trades historical depth for accessibility: we observe approximately the most recent 1,000–2,000 posts at any given collection time.\nEach observation includes:\n\nPost title and selftext (body): the primary text inputs for sentiment scoring\nUpvote score: used as a volume-weighting factor in daily aggregation\nComment count and upvote ratio: proxy measures of community engagement\nFlair: WSB’s post categorization (e.g., “DD” for due diligence, “Gain Porn”, “Loss Porn”)\nUTC timestamp: used to assign posts to trading days\n\nPosts were filtered to remove deleted content ([removed], [deleted]) and extremely short titles (fewer than 5 characters) that offer no semantic content.\n\n\n3.2 Equity Price Data\nDaily adjusted closing prices for the S&P 500 (^GSPC) and S&P 100 (^OEX) were downloaded via the yfinance library, which provides clean adjusted close data accounting for splits and dividends. Log-returns were computed as \\(r_t = \\ln(P_t / P_{t-1})\\) to ensure stationarity and additivity across time horizons.\nThe analysis period covers January 2024 through April 2026, capturing roughly two years of market activity including multiple Federal Reserve policy pivots, the 2024 U.S. presidential election, and several idiosyncratic volatility events.\n\n\n3.3 Data Alignment\nA key challenge in merging social media and financial data is the mismatch between calendar days (when Reddit posts occur) and trading days (when markets operate). We address this by:\n\nAssigning WSB posts to their UTC calendar date\nComputing daily sentiment aggregates for all calendar dates\nPerforming an inner join on trading days only, so weekends and holidays (when markets are closed) are excluded from the analysis"
+  },
+  {
+    "objectID": "report.html#methods",
+    "href": "report.html#methods",
+    "title": "Can Reddit’s Loudest Traders Predict the Market?",
+    "section": "4 Methods",
+    "text": "4 Methods\n\n4.1 Sentiment Scoring\n\n4.1.1 VADER\nWe apply the Valence Aware Dictionary and sEntiment Reasoner (VADER; Hutto and Gilbert (2014)) to the concatenated title and selftext of each post. VADER produces four scores per document: positive, negative, neutral, and a normalized compound score in [−1, +1]. The compound score is our primary VADER feature.\nVADER is well-suited to WSB text for several reasons: it handles informal language, all-caps emphasis (GOING TO THE MOON), punctuation patterns (!!!), and slang without requiring fine-tuning. Its lexicon does include some finance-specific entries, though it was not originally designed for financial text.\n\n\n4.1.2 TextBlob\nTextBlob provides a rule-based polarity score in [−1, +1] and a subjectivity score in [0, 1]. While generally less robust than VADER for informal text, TextBlob’s subjectivity score is a useful filter: high-subjectivity posts are more expressive and potentially more sentiment-laden, while low-subjectivity posts (e.g., news links) carry little opinion signal.\n\n\n4.1.3 Daily Aggregation\nPost-level scores are aggregated to daily sentiment using an upvote-weighted mean. For a day \\(d\\) with posts \\(i = 1, \\ldots, n_d\\):\n\\[\n\\bar{s}_d = \\frac{\\sum_i (u_i + 1) \\cdot s_i}{\\sum_i (u_i + 1)}\n\\]\nwhere \\(s_i\\) is the VADER compound score and \\(u_i\\) is the upvote score. The \\(+1\\) prevents zero-weight assignments for posts with zero or negative upvotes.\n\n\n\n4.2 Lag Correlation\nWe test Pearson correlations between daily sentiment \\(\\bar{s}_{t-k}\\) and returns \\(r_t\\) at lags \\(k \\in \\{-10, \\ldots, 0, \\ldots, +10\\}\\). Positive lags imply sentiment leads returns; negative lags imply returns lead sentiment. Two-tailed p-values test the null hypothesis \\(\\rho = 0\\) at \\(\\alpha = 0.05\\).\n\n\n4.3 Direction Classification\nWe frame next-day market direction as a binary classification problem: \\(y_t = \\mathbb{1}[r_{t+1} &gt; 0]\\). The feature set includes:\n\nLagged daily VADER compound scores (lags 1, 2, 3, 5)\n3-day and 5-day rolling mean sentiment\nLagged 1-day index return\n\nA logistic regression classifier is trained on the first 80% of the sample (chronological split, no shuffling) and evaluated on the held-out 20%. Features are standardized using StandardScaler fit only on the training set to prevent data leakage."
+  },
+  {
+    "objectID": "report.html#results",
+    "href": "report.html#results",
+    "title": "Can Reddit’s Loudest Traders Predict the Market?",
+    "section": "5 Results",
+    "text": "5 Results\n\n5.1 Descriptive Statistics\nWSB sentiment is predominantly positive — the distribution of VADER compound scores is right-skewed, with a mean near +0.15. This is consistent with the community’s culture of optimism and self-selection: bearish posts tend to receive fewer upvotes and less engagement. TextBlob polarity tracks VADER moderately well (Pearson r ≈ 0.55), with notable divergences around meme stock events where VADER’s informal-language handling produces different scores.\nPost volume is highly variable, ranging from under 50 posts on holiday-adjacent days to over 300 on high-volatility days (e.g., CPI release dates, FOMC meetings). This motivates our upvote-weighted aggregation, which down-weights low-engagement days.\n\n\n5.2 Lag Correlation Analysis\nThe lag correlation analysis reveals a complex, mostly noise-dominated relationship. Key findings:\n\nContemporaneous correlation (lag 0): modest positive correlation between daily WSB sentiment and same-day S&P 500 returns (r ≈ 0.08–0.12), consistent with shared reaction to the same macro news flow.\nLeading signal (lags +1 to +3): correlations are weak and rarely significant, suggesting that WSB sentiment does not robustly predict next-day returns in the full sample.\nReturn-to-sentiment feedback (lags −1 to −3): somewhat stronger correlations in the negative-lag region, consistent with the hypothesis that WSB traders react to market moves more than they anticipate them.\n\nThis asymmetry — stronger signal when returns lead sentiment than when sentiment leads returns — is consistent with Da et al. (2011) and Bing et al. (2016), who find retail attention metrics to be lagging rather than leading indicators for large-cap indices.\n\n\n5.3 Classification Performance\nThe logistic regression classifier achieves test accuracy of approximately 52–55%, marginally above the majority-class baseline of ~52% (the S&P 500 is up more days than it is down over the sample period). This modest outperformance is consistent with the theoretical prior: even a weak but non-zero sentiment signal can translate to above-baseline accuracy if the model is not overfit.\nFeature importance analysis reveals that 5-day rolling VADER sentiment and lagged 1-day return (momentum) are the most influential features, while short-lag (lag 1) raw sentiment contributes relatively little. This suggests that short-horizon sentiment noise washes out, while the trend in sentiment over a week carries slightly more information.\n\n\n5.4 S&P 100 vs. S&P 500\nComparing predictive performance on the S&P 100 (^OEX) versus the S&P 500 (^GSPC), we find marginally stronger correlations for the S&P 100. This is consistent with the prior that WSB discussion concentrates heavily on mega-cap names (AAPL, TSLA, NVDA, AMD) that dominate the S&P 100 weighting but have diluted influence at the broader S&P 500 level."
+  },
+  {
+    "objectID": "report.html#discussion",
+    "href": "report.html#discussion",
+    "title": "Can Reddit’s Loudest Traders Predict the Market?",
+    "section": "6 Discussion",
+    "text": "6 Discussion\n\n6.1 Interpretation\nOur results are consistent with the efficient market literature: WSB sentiment does not provide a reliable, exploitable edge for predicting broad market direction on a daily basis. The modest correlations observed are likely explained by a combination of:\n\nContemporaneous news exposure: both WSB posters and market prices react to the same macro announcements, generating spurious correlation at lag 0.\nMomentum contamination: WSB community sentiment tends to follow recent performance, so lagged returns confound the sentiment signal.\nSample size limitations: with roughly 2 years of trading days and approximately 500 post-days of overlap, statistical power is limited.\n\nThat said, we do not rule out the existence of a stronger signal in narrower contexts: individual high-discussion equities (TSLA, GME), extreme sentiment episodes, or intraday rather than daily horizons. Applying FinBERT, a finance-domain transformer, might also recover signal lost by lexicon-based methods on highly idiomatic WSB text.\n\n\n6.2 Limitations\nData depth: Reddit’s public JSON API is limited to approximately the most recent 1,000 posts, making it impossible to reconstruct a truly historical, back-tested dataset without a Pushshift dump or academic API access.\nText quality: WSB contains high proportions of memes, image posts, and self-referential humor that carry no sentiment signal. A more aggressive post-quality filter (using flair, minimum body length, or engagement thresholds) would improve signal-to-noise.\nLexical limitations: VADER and TextBlob are not trained on financial text and can misinterpret domain-specific terms (“calls”, “puts”, “moon”, “apes”) that carry strong sentiment in WSB context.\nModel complexity: Logistic regression may be too simple to capture non-linear interactions between sentiment, momentum, and volatility regime. Tree-based models (XGBoost, Random Forest) and sequence models (LSTM, Transformer) are natural extensions.\n\n\n6.3 Future Work\n\nIntegrate FinBERT for finance-domain sentiment scoring\nExtend to ticker-level analysis (TSLA sentiment → TSLA returns)\nAdd VIX as a volatility-regime conditioning variable\nExplore intraday data during peak WSB activity windows"
+  },
+  {
+    "objectID": "report.html#conclusion",
+    "href": "report.html#conclusion",
+    "title": "Can Reddit’s Loudest Traders Predict the Market?",
+    "section": "7 Conclusion",
+    "text": "7 Conclusion\nThis project demonstrates a complete, reproducible data science pipeline for exploring the relationship between retail investor sentiment and equity market returns. The wsbsent package provides modular tools for scraping, scoring, merging, and analyzing this data, and the interactive Streamlit app makes the analysis accessible without programming knowledge.\nOur core finding — that WSB sentiment exhibits modest contemporaneous correlation with returns but weak predictive power for future direction — is consistent with the broader literature on retail investor attention and efficient markets. The pipeline itself, however, is a contribution: it enables researchers to rapidly prototype WSB-based sentiment studies without navigating proprietary data access or complex authentication flows."
+  },
+  {
+    "objectID": "report.html#references",
+    "href": "report.html#references",
+    "title": "Can Reddit’s Loudest Traders Predict the Market?",
+    "section": "8 References",
+    "text": "8 References\n\n\nBing, Li, Keith CC Chan, and Carol Ou. 2016. “Social Media Analytics in Stock Market Prediction.” Expert Systems with Applications 44: 427–39.\n\n\nDa, Zhi, Joseph Engelberg, and Pengjie Gao. 2011. “In Search of Attention.” The Journal of Finance 66 (5): 1461–99.\n\n\nHutto, Clayton, and Eric Gilbert. 2014. “VADER: A Parsimonious Rule-Based Model for Sentiment Analysis of Social Media Text.” Proceedings of the International AAAI Conference on Web and Social Media 8 (1): 216–25.\n\n\n\nRepository: github.com/mrataeran/wsbsent STAT 386 Final Project · Brigham Young University · Winter 2026"
+  },
+  {
+    "objectID": "tutorial.html",
+    "href": "tutorial.html",
+    "title": "Tutorial: End-to-End WSB Sentiment Pipeline",
+    "section": "",
+    "text": "This tutorial walks you through the complete wsbsent pipeline from raw Reddit posts to a trained market direction classifier."
+  },
+  {
+    "objectID": "tutorial.html#setup",
+    "href": "tutorial.html#setup",
+    "title": "Tutorial: End-to-End WSB Sentiment Pipeline",
+    "section": "0. Setup",
+    "text": "0. Setup\npip install git+https://github.com/mrataeran/wsbsent.git\nOr install from source:\ngit clone https://github.com/mrataeran/wsbsent.git\ncd wsbsent\npip install -e \".[dev]\""
+  },
+  {
+    "objectID": "tutorial.html#collect-wsb-posts",
+    "href": "tutorial.html#collect-wsb-posts",
+    "title": "Tutorial: End-to-End WSB Sentiment Pipeline",
+    "section": "1. Collect WSB Posts",
+    "text": "1. Collect WSB Posts\nThe scrape_wsb function uses Reddit’s public JSON API — no developer account or OAuth token required. Each page returns up to 100 posts.\nfrom wsbsent import scrape_wsb\n\n# Fetch 500 posts from the 'new' feed\nposts = scrape_wsb(sort=\"new\", pages=5)\n\nprint(posts.shape)          # (500, 10)\nprint(posts.columns.tolist())\n# ['post_id', 'title', 'selftext', 'score', 'num_comments',\n#  'upvote_ratio', 'created_utc', 'date', 'flair', 'url']\n\nposts.head(3)[[\"title\", \"score\", \"date\"]]\nRate limiting: A sleep=1.5 second pause is inserted between pages to respect Reddit’s anonymous API rate limits. For large scrapes, increase sleep to 2.0."
+  },
+  {
+    "objectID": "tutorial.html#score-sentiment",
+    "href": "tutorial.html#score-sentiment",
+    "title": "Tutorial: End-to-End WSB Sentiment Pipeline",
+    "section": "2. Score Sentiment",
+    "text": "2. Score Sentiment\nfrom wsbsent import score_posts\n\nscored = score_posts(posts, method=\"both\")\n\n# New columns added:\n# vader_compound, vader_pos, vader_neg, vader_neu\n# tb_polarity, tb_subjectivity\n\nscored[[\"title\", \"vader_compound\", \"tb_polarity\"]].head()\nVADER (Valence Aware Dictionary and sEntiment Reasoner) is optimized for short, informal text — making it well suited for WSB titles. Scores range from −1 (most negative) to +1 (most positive).\nTextBlob provides both polarity (−1 to +1) and subjectivity (0 to 1), useful for filtering out objective/factual posts from sentiment analysis."
+  },
+  {
+    "objectID": "tutorial.html#aggregate-to-daily-scores",
+    "href": "tutorial.html#aggregate-to-daily-scores",
+    "title": "Tutorial: End-to-End WSB Sentiment Pipeline",
+    "section": "3. Aggregate to Daily Scores",
+    "text": "3. Aggregate to Daily Scores\nIndividual post scores are noisy. We aggregate them to a daily average, volume-weighted by upvote score so that high-engagement posts carry more weight.\nfrom wsbsent import aggregate_daily_sentiment\n\ndaily = aggregate_daily_sentiment(scored, weight_col=\"score\")\n\ndaily.head()\n#            vader_compound  vader_pos  ...  post_count  total_score\n# date\n# 2024-01-02        0.1342      0.183  ...          47        12432\n# 2024-01-03       -0.0521      0.142  ...          63         8901"
+  },
+  {
+    "objectID": "tutorial.html#fetch-price-data",
+    "href": "tutorial.html#fetch-price-data",
+    "title": "Tutorial: End-to-End WSB Sentiment Pipeline",
+    "section": "4. Fetch Price Data",
+    "text": "4. Fetch Price Data\nfrom wsbsent import get_prices, get_returns\n\nprices = get_prices(tickers=[\"^GSPC\", \"^OEX\"], start=\"2024-01-01\")\nreturns = get_returns(prices)   # log-returns by default\n\nreturns.tail()\n^GSPC is the S&P 500 index; ^OEX is the S&P 100. You can pass any valid Yahoo Finance ticker symbol."
+  },
+  {
+    "objectID": "tutorial.html#merge-and-visualize",
+    "href": "tutorial.html#merge-and-visualize",
+    "title": "Tutorial: End-to-End WSB Sentiment Pipeline",
+    "section": "5. Merge and Visualize",
+    "text": "5. Merge and Visualize\nfrom wsbsent import merge_sentiment_prices, plot_sentiment_returns\nimport matplotlib.pyplot as plt\n\nmerged = merge_sentiment_prices(daily, returns)\n\nfig = plot_sentiment_returns(\n    merged,\n    sentiment_col=\"vader_compound\",\n    return_col=\"^GSPC\",\n)\nplt.show()\nThe dual-axis chart displays cumulative log-returns as a line on the left axis, with daily sentiment bars (green = positive, red = negative) on the right axis."
+  },
+  {
+    "objectID": "tutorial.html#lag-correlation-analysis",
+    "href": "tutorial.html#lag-correlation-analysis",
+    "title": "Tutorial: End-to-End WSB Sentiment Pipeline",
+    "section": "6. Lag Correlation Analysis",
+    "text": "6. Lag Correlation Analysis\nDoes WSB sentiment lead returns, or do returns drive sentiment?\nfrom wsbsent import lagged_correlation, plot_correlation_heatmap\n\nlag_df = lagged_correlation(\n    merged,\n    sentiment_col=\"vader_compound\",\n    return_col=\"^GSPC\",\n    max_lag=10,\n)\n\n# Positive lags: sentiment leads returns\n# Negative lags: returns lead sentiment\nlag_df[lag_df[\"significant\"]]\n\nfig = plot_correlation_heatmap(lag_df)\nplt.show()\nBars marked with * indicate p &lt; 0.05 (two-tailed Pearson test)."
+  },
+  {
+    "objectID": "tutorial.html#build-classification-features",
+    "href": "tutorial.html#build-classification-features",
+    "title": "Tutorial: End-to-End WSB Sentiment Pipeline",
+    "section": "7. Build Classification Features",
+    "text": "7. Build Classification Features\nfrom wsbsent import build_features\n\nfeatures = build_features(\n    merged,\n    lags=[1, 2, 3, 5],\n    rolling_windows=[3, 5],\n    target_col=\"^GSPC\",\n    horizon=1,              # predict next-day direction\n)\n\nprint(features[\"target\"].value_counts())\n# 1    132   (bullish days)\n# 0    118   (bearish days)\nThe build_features function engineers: - Lagged sentiment scores (t−1, t−2, t−3, t−5) - Rolling mean sentiment (3-day, 5-day) - Lagged 1-day returns"
+  },
+  {
+    "objectID": "tutorial.html#train-the-direction-classifier",
+    "href": "tutorial.html#train-the-direction-classifier",
+    "title": "Tutorial: End-to-End WSB Sentiment Pipeline",
+    "section": "8. Train the Direction Classifier",
+    "text": "8. Train the Direction Classifier\nfrom wsbsent import classify_direction, plot_confusion, plot_feature_importance\n\nresults = classify_direction(features, target_col=\"target\")\n\nprint(f\"Test accuracy: {results['accuracy']:.1%}\")\n\nfig_cm = plot_confusion(results[\"confusion\"], results[\"accuracy\"])\nfig_fi = plot_feature_importance(results[\"feature_importance\"])\nplt.show()\nThe model uses logistic regression with StandardScaler normalization and a chronological train/test split (no shuffle, preserving time order to avoid look-ahead bias)."
+  },
+  {
+    "objectID": "tutorial.html#run-the-streamlit-app",
+    "href": "tutorial.html#run-the-streamlit-app",
+    "title": "Tutorial: End-to-End WSB Sentiment Pipeline",
+    "section": "9. Run the Streamlit App",
+    "text": "9. Run the Streamlit App\nstreamlit run app/streamlit_app.py\nThe interactive dashboard lets you: - Select any ticker from the S&P 100 universe - Choose a date range - Toggle between VADER, TextBlob, or both - Explore all charts and raw data tables interactively"
+  },
+  {
+    "objectID": "tutorial.html#cli-pipeline",
+    "href": "tutorial.html#cli-pipeline",
+    "title": "Tutorial: End-to-End WSB Sentiment Pipeline",
+    "section": "10. CLI Pipeline",
+    "text": "10. CLI Pipeline\nFor batch processing:\npython scripts/clean_data.py \\\n    --pages 10 \\\n    --start 2024-01-01 \\\n    --tickers \"^GSPC\" \"^OEX\" \"AAPL\" \"MSFT\" \\\n    --method both \\\n    --out data/"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "wsbsent",
+    "section": "",
+    "text": "wsbsent is a Python package for investigating whether retail investor sentiment — as expressed on r/wallstreetbets — contains measurable predictive signal for S&P 100 and S&P 500 equity returns.\nThe package covers the complete data science pipeline:\n\n\n\n\n\n\n\n\nStage\nModule\nDescription\n\n\n\n\nCollection\ncollect.py\nScrape WSB via Reddit public JSON API\n\n\nScoring\nsentiment.py\nVADER + TextBlob sentiment scoring\n\n\nPrices\nprices.py\nyfinance OHLCV + log-return calculation\n\n\nWrangling\nwrangling.py\nMerge, lag features, classification target\n\n\nAnalysis\nanalysis.py\nLagged Pearson correlation + logistic regression\n\n\nVisualization\nvisualize.py\nTime series, lag charts, confusion matrices"
+  },
+  {
+    "objectID": "index.html#overview",
+    "href": "index.html#overview",
+    "title": "wsbsent",
+    "section": "",
+    "text": "wsbsent is a Python package for investigating whether retail investor sentiment — as expressed on r/wallstreetbets — contains measurable predictive signal for S&P 100 and S&P 500 equity returns.\nThe package covers the complete data science pipeline:\n\n\n\n\n\n\n\n\nStage\nModule\nDescription\n\n\n\n\nCollection\ncollect.py\nScrape WSB via Reddit public JSON API\n\n\nScoring\nsentiment.py\nVADER + TextBlob sentiment scoring\n\n\nPrices\nprices.py\nyfinance OHLCV + log-return calculation\n\n\nWrangling\nwrangling.py\nMerge, lag features, classification target\n\n\nAnalysis\nanalysis.py\nLagged Pearson correlation + logistic regression\n\n\nVisualization\nvisualize.py\nTime series, lag charts, confusion matrices"
+  },
+  {
+    "objectID": "index.html#installation",
+    "href": "index.html#installation",
+    "title": "wsbsent",
+    "section": "Installation",
+    "text": "Installation\npip install git+https://github.com/mrataeran/wsbsent.git"
+  },
+  {
+    "objectID": "index.html#navigation",
+    "href": "index.html#navigation",
+    "title": "wsbsent",
+    "section": "Navigation",
+    "text": "Navigation\n\nTutorial — step-by-step walkthrough of the full pipeline\nReport — written project report (STAT 386 final deliverable)"
+  },
+  {
+    "objectID": "index.html#api-reference",
+    "href": "index.html#api-reference",
+    "title": "wsbsent",
+    "section": "API Reference",
+    "text": "API Reference\n\nwsbsent.collect\n\nscrape_wsb(sort, pages, sleep)\n\nScrape r/wallstreetbets posts using the public Reddit JSON endpoint. No API credentials required. Returns a pd.DataFrame with columns post_id, title, selftext, score, num_comments, date, flair.\n\nload_posts(path)\n\nLoad a previously saved posts CSV.\n\n\n\n\n\nwsbsent.sentiment\n\nscore_posts(df, text_col, include_selftext, method)\n\nApply VADER and/or TextBlob to post text. Returns original DataFrame with added columns vader_compound, vader_pos, vader_neg, vader_neu, tb_polarity, tb_subjectivity.\n\naggregate_daily_sentiment(scored, date_col, weight_col)\n\nVolume-weighted aggregation of post-level scores to daily granularity.\n\n\n\n\n\nwsbsent.prices\n\nget_prices(tickers, start, end, interval)\n\nDownload adjusted close prices via yfinance.\n\nget_returns(prices, log)\n\nCompute daily log-returns or simple returns from a prices DataFrame.\n\n\n\n\n\nwsbsent.wrangling\n\nmerge_sentiment_prices(sentiment, returns, how)\n\nAlign daily sentiment and return DataFrames by date.\n\nbuild_features(merged, sentiment_cols, lags, rolling_windows, target_col, horizon)\n\nEngineer lagged and rolling features; append a binary target column (1 = next-day return &gt; 0).\n\n\n\n\n\nwsbsent.analysis\n\nlagged_correlation(merged, sentiment_col, return_col, max_lag)\n\nCompute Pearson r and p-values at lags from −max_lag to +max_lag.\n\nclassify_direction(features, feature_cols, target_col, test_size)\n\nTrain a logistic regression classifier with a chronological train/test split. Returns accuracy, classification report, confusion matrix, and feature importances.\n\n\n\n\n\nwsbsent.visualize\n\nplot_sentiment_returns(merged, sentiment_col, return_col)\n\nDual-axis chart: cumulative return (line) + daily sentiment (bars).\n\nplot_correlation_heatmap(lag_df)\n\nBar chart of lagged Pearson correlations with significance markers.\n\nplot_confusion(confusion, accuracy)\n\nSeaborn heatmap confusion matrix.\n\nplot_feature_importance(importance, top_n)\n\nHorizontal bar chart of top logistic regression feature coefficients."
+  }
+]
