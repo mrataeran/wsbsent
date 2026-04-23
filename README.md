@@ -7,7 +7,7 @@ and investigates whether retail investor sentiment carries predictive signal
 for S&P 100 and S&P 500 returns.
 
 Built for STAT 386 Final Project, Winter 2026 · Brigham Young University
-by @mrataeran & @vaoikun
+by Ata Eran & Vance Williams
 ---
 
 ## Installation
