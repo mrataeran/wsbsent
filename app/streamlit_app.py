@@ -38,7 +38,7 @@ from wsbsent.visualize import (
 # Page config
 # ──────────────────────────────────────────────
 st.set_page_config(
-    page_title="WSBSent — Sentiment & Equity Return Predictor",
+    page_title="WSBSent, Sentiment & Equity Return Predictor",
     page_icon="📈",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -94,7 +94,7 @@ with st.sidebar:
 
     st.markdown("### 🔄 Data Source")
     n_pages = st.slider("Reddit pages (100 posts/page)", 1, 20, 10)
-    st.caption("💡 10+ pages recommended for real data — more pages = wider date coverage.")
+    st.caption("💡 10+ pages recommended for real data, more pages = wider date coverage.")
     sort_mode = st.selectbox("Sort", ["new", "hot", "top"], index=0)
 
     demo_mode = st.checkbox("🧪 Demo mode (synthetic data)", value=False,
@@ -157,7 +157,7 @@ def run_pipeline(sort, pages, start, end, ticker, method, demo=False):
     scored = score_posts(posts, method=m)
     daily_sent = aggregate_daily_sentiment(scored)
 
-    # 3. Prices — align date range to actual post coverage for maximum overlap
+    # 3. Prices, align date range to actual post coverage for maximum overlap
     tickers_to_fetch = list({ticker, "^GSPC"})
     if not posts.empty and "date" in posts.columns:
         price_start = str(posts["date"].min().date())
@@ -178,7 +178,7 @@ def run_pipeline(sort, pages, start, end, ticker, method, demo=False):
     merged[ret_cols] = merged[ret_cols].ffill()
     merged = merged.dropna(subset=ret_cols)
 
-    # 5. Lag correlation — use adaptive max_lag so small datasets still work
+    # 5. Lag correlation, use adaptive max_lag so small datasets still work
     sent_col_map = {"vader": "vader_compound", "textblob": "tb_polarity", "both": "vader_compound"}
     sc = sent_col_map.get(m, "vader_compound")
     if sc not in merged.columns:
@@ -301,7 +301,7 @@ if res is not None:
             report_df = pd.DataFrame(clf_results["report"]).T
             st.dataframe(report_df.round(3), use_container_width=True)
         else:
-            st.warning("Classification failed — insufficient data.")
+            st.warning("Classification failed, insufficient data.")
 
     with tab4:
         st.subheader("Daily Sentiment")

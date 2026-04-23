@@ -128,7 +128,7 @@ def classify_direction(
     X = features[feature_cols].values
     y = features[target_col].values
 
-    # Chronological train/test split (no shuffle — preserves time ordering)
+    # Chronological train/test split (no shuffle, preserves time ordering)
     split = int(len(X) * (1 - test_size))
     X_train, X_test = X[:split], X[split:]
     y_train, y_test = y[:split], y[split:]

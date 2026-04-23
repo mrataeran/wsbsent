@@ -9,7 +9,7 @@ import pandas as pd
 import numpy as np
 import yfinance as yf
 
-# S&P 100 tickers (as of 2025) — representative subset used as default universe
+# S&P 100 tickers (as of 2025), representative subset used as default universe
 SP100_TICKERS = [
     "AAPL", "MSFT", "AMZN", "NVDA", "GOOGL", "META", "TSLA", "BRK-B",
     "UNH", "LLY", "JPM", "V", "XOM", "JNJ", "WMT", "MA", "PG", "HD",

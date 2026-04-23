@@ -2,7 +2,7 @@
 collect.py
 ----------
 Scrape posts and comments from r/wallstreetbets using Reddit's public JSON API.
-No API credentials required — uses the public .json endpoint with a rate-limited
+No API credentials required, uses the public .json endpoint with a rate-limited
 request loop.
 """
 
@@ -24,22 +24,22 @@ HEADERS = {
 BASE_URL = "https://www.reddit.com/r/wallstreetbets/{sort}.json"
 
 _SAMPLE_TITLES = [
-    "YOLO'd my life savings into TSLA calls — up 300% 🚀🚀🚀",
+    "YOLO'd my life savings into TSLA calls, up 300% 🚀🚀🚀",
     "SPY puts printing, bears eating today",
-    "Why NVDA is going to $1000 — my DD",
+    "Why NVDA is going to $1000, my DD",
     "Lost $50k on GME this week, back to zero",
     "Fed pivot incoming? Loading up on QQQ calls",
-    "AAPL earnings play — what's your thesis?",
+    "AAPL earnings play, what's your thesis?",
     "This market is completely rigged, change my mind",
     "AMD going to crush earnings tomorrow, technical breakdown",
     "Closed my short position, taking small loss. Not worth it.",
     "PLTR to the moon, robots will rule the world",
     "Bear market incoming? Here's why I'm buying puts",
-    "My MSFT call spread just doubled — staying in",
+    "My MSFT call spread just doubled, staying in",
     "Sold everything Friday, cash gang until fed meeting",
     "Meme stocks back? AMC and GME spiking pre-market",
-    "Rate cut bets crumbling — market overreaction or justified?",
-    "Options expiration Friday — expect volatility",
+    "Rate cut bets crumbling, market overreaction or justified?",
+    "Options expiration Friday, expect volatility",
     "First green day in 2 weeks, bulls finally showing up",
     "RIVN down 15%, loading more puts",
     "Bought the dip on COIN, already up 8%",
@@ -255,25 +255,25 @@ def generate_sample_data(
 
     bull_titles = [
         "NVDA is going to the moon 🚀", "Loading up on SPY calls before CPI",
-        "This rally is just getting started", "Bought the dip — see you at ATH",
+        "This rally is just getting started", "Bought the dip, see you at ATH",
         "GME short interest is insane right now", "Fed pivot = infinite money glitch",
         "TSLA breaking out of the wedge", "Why I'm all-in on tech this quarter",
-        "S&P 500 hit new ATH — bears destroyed", "Just turned $5k into $50k on options",
+        "S&P 500 hit new ATH, bears destroyed", "Just turned $5k into $50k on options",
         "Market is pricing in too much fear", "Rotation into growth is happening NOW",
-        "AMD earnings gonna send us to Mars", "Bull thesis for MSFT — long read but worth it",
+        "AMD earnings gonna send us to Mars", "Bull thesis for MSFT, long read but worth it",
         "Options flow is screaming bullish", "My 5-bagger play for Q4",
     ]
     bear_titles = [
-        "Bear case for SPY — change my mind", "This market is in a bubble",
-        "Hedging with puts before FOMC", "GDP miss incoming — stay cautious",
+        "Bear case for SPY, change my mind", "This market is in a bubble",
+        "Hedging with puts before FOMC", "GDP miss incoming, stay cautious",
         "Sold everything, going to cash", "Why I think we revisit October lows",
         "Credit spreads are flashing red", "Inverse ETFs printing today",
-        "VIX spike incoming — watch out", "This rally has no volume behind it",
+        "VIX spike incoming, watch out", "This rally has no volume behind it",
         "Recession fears are real this time", "Took profits, market looks toppy",
     ]
     neutral_titles = [
         "DD: deep dive into earnings preview", "What's your play for this week?",
-        "WSB daily discussion thread", "Positions update — show me yours",
+        "WSB daily discussion thread", "Positions update, show me yours",
         "Reading the tape on sector rotation", "Options expiry week strategy",
         "My portfolio after 1 year on WSB", "Thoughts on after-hours moves?",
         "Anyone else watching the yield curve?", "Rate my portfolio",

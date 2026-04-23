@@ -132,7 +132,7 @@ def plot_correlation_heatmap(
 
     ax.axhline(0, color="gray", linewidth=0.8)
     ax.axvline(0, color="gray", linewidth=0.8, linestyle="--", alpha=0.5)
-    ax.set_xlabel("Lag (days) — negative = returns lead sentiment", fontsize=11)
+    ax.set_xlabel("Lag (days), negative = returns lead sentiment", fontsize=11)
     ax.set_ylabel("Pearson r", fontsize=11)
     ax.set_title(title, fontsize=13, fontweight="bold")
     ax.annotate(
