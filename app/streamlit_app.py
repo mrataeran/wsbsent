@@ -150,7 +150,7 @@ def run_pipeline(sort, pages, start, end, ticker, method, demo=False):
 
     if posts.empty or "title" not in posts.columns:
         raise RuntimeError(
-            "Reddit scraping returned no posts. Reddit may be blocking this network. "
+            "No posts returned from Arctic Shift API. Check your internet connection. "
             "Enable Demo mode in the sidebar to test with synthetic data instead."
         )
 
