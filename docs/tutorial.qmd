@@ -23,7 +23,7 @@ pip install -e ".[dev]"
 
 ## 1. Collect WSB Posts
 
-The `scrape_wsb` function uses Reddit's **public JSON API** ,  no developer
+The `scrape_wsb` function uses Reddit's **public JSON API**,  no developer
 account or OAuth token required. Each page returns up to 100 posts.
 
 ```python
@@ -61,7 +61,7 @@ scored[["title", "vader_compound", "tb_polarity"]].head()
 ```
 
 **VADER** (Valence Aware Dictionary and sEntiment Reasoner) is optimized
-for short, informal text ,  making it well suited for WSB titles. Scores
+for short, informal text,  making it well suited for WSB titles. Scores
 range from −1 (most negative) to +1 (most positive).
 
 **TextBlob** provides both polarity (−1 to +1) and subjectivity (0 to 1),

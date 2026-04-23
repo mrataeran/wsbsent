@@ -210,7 +210,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="collect-wsb-posts" class="level2">
 <h2 class="anchored" data-anchor-id="collect-wsb-posts">1. Collect WSB Posts</h2>
-<p>The <code>scrape_wsb</code> function uses Reddit’s <strong>public JSON API</strong> ,  no developer account or OAuth token required. Each page returns up to 100 posts.</p>
+<p>The <code>scrape_wsb</code> function uses Reddit’s <strong>public JSON API</strong>,  no developer account or OAuth token required. Each page returns up to 100 posts.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> wsbsent <span class="im">import</span> scrape_wsb</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Fetch 500 posts from the 'new' feed</span></span>
@@ -236,7 +236,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># tb_polarity, tb_subjectivity</span></span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>scored[[<span class="st">"title"</span>, <span class="st">"vader_compound"</span>, <span class="st">"tb_polarity"</span>]].head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>VADER</strong> (Valence Aware Dictionary and sEntiment Reasoner) is optimized for short, informal text ,  making it well suited for WSB titles. Scores range from −1 (most negative) to +1 (most positive).</p>
+<p><strong>VADER</strong> (Valence Aware Dictionary and sEntiment Reasoner) is optimized for short, informal text,  making it well suited for WSB titles. Scores range from −1 (most negative) to +1 (most positive).</p>
 <p><strong>TextBlob</strong> provides both polarity (−1 to +1) and subjectivity (0 to 1), useful for filtering out objective/factual posts from sentiment analysis.</p>
 <hr>
 </section>
