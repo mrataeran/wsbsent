@@ -208,6 +208,7 @@ def run_pipeline(sort, pages, start, end, ticker, method, demo=False):
         "clf_results": clf_results,
         "sent_col": sc,
         "target_col": target_col,
+        "source": "live",
     }
 
 
@@ -249,6 +250,10 @@ if res is not None:
     with col4:
         if clf_results:
             st.metric("Classifier Accuracy", f"{clf_results['accuracy']:.1%}")
+
+    # Source banner
+    if res.get("source") == "preloaded":
+        st.warning("Arctic Shift API unavailable from this server. Showing preloaded dataset collected locally.", icon="📦")
 
     # Coverage info banner
     if not merged.empty:
