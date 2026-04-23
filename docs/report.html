@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Ata Raeran">
+<meta name="dcterms.date" content="2026-04-22">
+
+<title>Can Reddit’s Loudest Traders Predict the Market? – wsbsent</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-acf12a64177840b8d86f2d4f01b2e9fb.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-09bcd2438ddda8166a810b4ec224e0a2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">wsbsent</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./tutorial.html"> 
+<span class="menu-text">Tutorial</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./report.html" aria-current="page"> 
+<span class="menu-text">Report</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/mrataeran/wsbsent"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#abstract" id="toc-abstract" class="nav-link active" data-scroll-target="#abstract"><span class="header-section-number">1</span> Abstract</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction"><span class="header-section-number">2</span> Introduction</a></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data"><span class="header-section-number">3</span> Data</a>
+  <ul class="collapse">
+  <li><a href="#rwallstreetbets-posts" id="toc-rwallstreetbets-posts" class="nav-link" data-scroll-target="#rwallstreetbets-posts"><span class="header-section-number">3.1</span> r/wallstreetbets Posts</a></li>
+  <li><a href="#equity-price-data" id="toc-equity-price-data" class="nav-link" data-scroll-target="#equity-price-data"><span class="header-section-number">3.2</span> Equity Price Data</a></li>
+  <li><a href="#data-alignment" id="toc-data-alignment" class="nav-link" data-scroll-target="#data-alignment"><span class="header-section-number">3.3</span> Data Alignment</a></li>
+  </ul></li>
+  <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods"><span class="header-section-number">4</span> Methods</a>
+  <ul class="collapse">
+  <li><a href="#sentiment-scoring" id="toc-sentiment-scoring" class="nav-link" data-scroll-target="#sentiment-scoring"><span class="header-section-number">4.1</span> Sentiment Scoring</a></li>
+  <li><a href="#lag-correlation" id="toc-lag-correlation" class="nav-link" data-scroll-target="#lag-correlation"><span class="header-section-number">4.2</span> Lag Correlation</a></li>
+  <li><a href="#direction-classification" id="toc-direction-classification" class="nav-link" data-scroll-target="#direction-classification"><span class="header-section-number">4.3</span> Direction Classification</a></li>
+  </ul></li>
+  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results"><span class="header-section-number">5</span> Results</a>
+  <ul class="collapse">
+  <li><a href="#descriptive-statistics" id="toc-descriptive-statistics" class="nav-link" data-scroll-target="#descriptive-statistics"><span class="header-section-number">5.1</span> Descriptive Statistics</a></li>
+  <li><a href="#lag-correlation-analysis" id="toc-lag-correlation-analysis" class="nav-link" data-scroll-target="#lag-correlation-analysis"><span class="header-section-number">5.2</span> Lag Correlation Analysis</a></li>
+  <li><a href="#classification-performance" id="toc-classification-performance" class="nav-link" data-scroll-target="#classification-performance"><span class="header-section-number">5.3</span> Classification Performance</a></li>
+  <li><a href="#sp-100-vs.-sp-500" id="toc-sp-100-vs.-sp-500" class="nav-link" data-scroll-target="#sp-100-vs.-sp-500"><span class="header-section-number">5.4</span> S&amp;P 100 vs.&nbsp;S&amp;P 500</a></li>
+  </ul></li>
+  <li><a href="#discussion" id="toc-discussion" class="nav-link" data-scroll-target="#discussion"><span class="header-section-number">6</span> Discussion</a>
+  <ul class="collapse">
+  <li><a href="#interpretation" id="toc-interpretation" class="nav-link" data-scroll-target="#interpretation"><span class="header-section-number">6.1</span> Interpretation</a></li>
+  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations"><span class="header-section-number">6.2</span> Limitations</a></li>
+  <li><a href="#future-work" id="toc-future-work" class="nav-link" data-scroll-target="#future-work"><span class="header-section-number">6.3</span> Future Work</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">7</span> Conclusion</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">8</span> References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Can Reddit’s Loudest Traders Predict the Market?</h1>
+<p class="subtitle lead">Sentiment Analysis of r/wallstreetbets and Equity Return Prediction</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Ata Raeran </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">April 22, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="abstract" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="abstract"><span class="header-section-number">1</span> Abstract</h2>
+<p>This project investigates whether the sentiment of retail investor posts on r/wallstreetbets (WSB) — one of the internet’s most prominent trading communities — carries measurable predictive signal for S&amp;P 100 and S&amp;P 500 equity returns. Using a custom Python package (<code>wsbsent</code>), we collect post data via Reddit’s public JSON API, apply VADER and TextBlob sentiment scorers, and align daily aggregated sentiment scores against historical index returns from Yahoo Finance. We test time-lagged Pearson correlations between sentiment and returns and train a logistic regression classifier to predict next-day market direction. Our findings suggest a modest, statistically marginal relationship between WSB sentiment and subsequent returns, consistent with existing literature on retail investor attention effects.</p>
+<hr>
+</section>
+<section id="introduction" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="introduction"><span class="header-section-number">2</span> Introduction</h2>
+<p>The GameStop short squeeze of January 2021 brought r/wallstreetbets to mainstream attention, crystallizing the idea that coordinated retail investor sentiment could move institutional-grade assets. Since then, researchers and practitioners alike have asked whether the signal embedded in WSB chatter is economically meaningful or merely noise — a loud but ultimately uninformative expression of retail enthusiasm.</p>
+<p>This project operationalizes that question through a reproducible data science pipeline. We collect raw post data from WSB, quantify its sentiment content using lexicon-based approaches (VADER and TextBlob), and evaluate the resulting scores as predictors of daily S&amp;P 500 (^GSPC) and S&amp;P 100 (^OEX) returns. The core analysis tests two hypotheses:</p>
+<ol type="1">
+<li><strong>Correlation hypothesis</strong>: Daily WSB sentiment is positively correlated with same-day or subsequent equity returns.</li>
+<li><strong>Predictability hypothesis</strong>: Lagged sentiment features can improve binary classification of next-day market direction (bullish vs.&nbsp;bearish) above the naive majority-class baseline.</li>
+</ol>
+<hr>
+</section>
+<section id="data" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="data"><span class="header-section-number">3</span> Data</h2>
+<section id="rwallstreetbets-posts" class="level3" data-number="3.1">
+<h3 data-number="3.1" class="anchored" data-anchor-id="rwallstreetbets-posts"><span class="header-section-number">3.1</span> r/wallstreetbets Posts</h3>
+<p>Post data was collected using Reddit’s public JSON API endpoint (<code>reddit.com/r/wallstreetbets/{sort}.json</code>), which allows paginated access to the 1,000 most recent posts in any subreddit without OAuth credentials. This approach trades historical depth for accessibility: we observe approximately the most recent 1,000–2,000 posts at any given collection time.</p>
+<p>Each observation includes:</p>
+<ul>
+<li><strong>Post title</strong> and <strong>selftext</strong> (body): the primary text inputs for sentiment scoring</li>
+<li><strong>Upvote score</strong>: used as a volume-weighting factor in daily aggregation</li>
+<li><strong>Comment count</strong> and <strong>upvote ratio</strong>: proxy measures of community engagement</li>
+<li><strong>Flair</strong>: WSB’s post categorization (e.g., “DD” for due diligence, “Gain Porn”, “Loss Porn”)</li>
+<li><strong>UTC timestamp</strong>: used to assign posts to trading days</li>
+</ul>
+<p>Posts were filtered to remove deleted content (<code>[removed]</code>, <code>[deleted]</code>) and extremely short titles (fewer than 5 characters) that offer no semantic content.</p>
+</section>
+<section id="equity-price-data" class="level3" data-number="3.2">
+<h3 data-number="3.2" class="anchored" data-anchor-id="equity-price-data"><span class="header-section-number">3.2</span> Equity Price Data</h3>
+<p>Daily adjusted closing prices for the S&amp;P 500 (^GSPC) and S&amp;P 100 (^OEX) were downloaded via the <code>yfinance</code> library, which provides clean adjusted close data accounting for splits and dividends. Log-returns were computed as <span class="math inline">\(r_t = \ln(P_t / P_{t-1})\)</span> to ensure stationarity and additivity across time horizons.</p>
+<p>The analysis period covers January 2024 through April 2026, capturing roughly two years of market activity including multiple Federal Reserve policy pivots, the 2024 U.S. presidential election, and several idiosyncratic volatility events.</p>
+</section>
+<section id="data-alignment" class="level3" data-number="3.3">
+<h3 data-number="3.3" class="anchored" data-anchor-id="data-alignment"><span class="header-section-number">3.3</span> Data Alignment</h3>
+<p>A key challenge in merging social media and financial data is the mismatch between calendar days (when Reddit posts occur) and trading days (when markets operate). We address this by:</p>
+<ol type="1">
+<li>Assigning WSB posts to their UTC calendar date</li>
+<li>Computing daily sentiment aggregates for all calendar dates</li>
+<li>Performing an inner join on trading days only, so weekends and holidays (when markets are closed) are excluded from the analysis</li>
+</ol>
+<hr>
+</section>
+</section>
+<section id="methods" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="methods"><span class="header-section-number">4</span> Methods</h2>
+<section id="sentiment-scoring" class="level3" data-number="4.1">
+<h3 data-number="4.1" class="anchored" data-anchor-id="sentiment-scoring"><span class="header-section-number">4.1</span> Sentiment Scoring</h3>
+<section id="vader" class="level4" data-number="4.1.1">
+<h4 data-number="4.1.1" class="anchored" data-anchor-id="vader"><span class="header-section-number">4.1.1</span> VADER</h4>
+<p>We apply the Valence Aware Dictionary and sEntiment Reasoner (VADER; <span class="citation" data-cites="hutto2014vader">Hutto and Gilbert (<a href="#ref-hutto2014vader" role="doc-biblioref">2014</a>)</span>) to the concatenated title and selftext of each post. VADER produces four scores per document: positive, negative, neutral, and a normalized <strong>compound</strong> score in [−1, +1]. The compound score is our primary VADER feature.</p>
+<p>VADER is well-suited to WSB text for several reasons: it handles informal language, all-caps emphasis (<code>GOING TO THE MOON</code>), punctuation patterns (<code>!!!</code>), and slang without requiring fine-tuning. Its lexicon does include some finance-specific entries, though it was not originally designed for financial text.</p>
+</section>
+<section id="textblob" class="level4" data-number="4.1.2">
+<h4 data-number="4.1.2" class="anchored" data-anchor-id="textblob"><span class="header-section-number">4.1.2</span> TextBlob</h4>
+<p>TextBlob provides a rule-based polarity score in [−1, +1] and a subjectivity score in [0, 1]. While generally less robust than VADER for informal text, TextBlob’s subjectivity score is a useful filter: high-subjectivity posts are more expressive and potentially more sentiment-laden, while low-subjectivity posts (e.g., news links) carry little opinion signal.</p>
+</section>
+<section id="daily-aggregation" class="level4" data-number="4.1.3">
+<h4 data-number="4.1.3" class="anchored" data-anchor-id="daily-aggregation"><span class="header-section-number">4.1.3</span> Daily Aggregation</h4>
+<p>Post-level scores are aggregated to daily sentiment using an upvote-weighted mean. For a day <span class="math inline">\(d\)</span> with posts <span class="math inline">\(i = 1, \ldots, n_d\)</span>:</p>
+<p><span class="math display">\[
+\bar{s}_d = \frac{\sum_i (u_i + 1) \cdot s_i}{\sum_i (u_i + 1)}
+\]</span></p>
+<p>where <span class="math inline">\(s_i\)</span> is the VADER compound score and <span class="math inline">\(u_i\)</span> is the upvote score. The <span class="math inline">\(+1\)</span> prevents zero-weight assignments for posts with zero or negative upvotes.</p>
+</section>
+</section>
+<section id="lag-correlation" class="level3" data-number="4.2">
+<h3 data-number="4.2" class="anchored" data-anchor-id="lag-correlation"><span class="header-section-number">4.2</span> Lag Correlation</h3>
+<p>We test Pearson correlations between daily sentiment <span class="math inline">\(\bar{s}_{t-k}\)</span> and returns <span class="math inline">\(r_t\)</span> at lags <span class="math inline">\(k \in \{-10, \ldots, 0, \ldots, +10\}\)</span>. Positive lags imply sentiment leads returns; negative lags imply returns lead sentiment. Two-tailed p-values test the null hypothesis <span class="math inline">\(\rho = 0\)</span> at <span class="math inline">\(\alpha = 0.05\)</span>.</p>
+</section>
+<section id="direction-classification" class="level3" data-number="4.3">
+<h3 data-number="4.3" class="anchored" data-anchor-id="direction-classification"><span class="header-section-number">4.3</span> Direction Classification</h3>
+<p>We frame next-day market direction as a binary classification problem: <span class="math inline">\(y_t = \mathbb{1}[r_{t+1} &gt; 0]\)</span>. The feature set includes:</p>
+<ul>
+<li>Lagged daily VADER compound scores (lags 1, 2, 3, 5)</li>
+<li>3-day and 5-day rolling mean sentiment</li>
+<li>Lagged 1-day index return</li>
+</ul>
+<p>A logistic regression classifier is trained on the first 80% of the sample (chronological split, no shuffling) and evaluated on the held-out 20%. Features are standardized using <code>StandardScaler</code> fit only on the training set to prevent data leakage.</p>
+<hr>
+</section>
+</section>
+<section id="results" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="results"><span class="header-section-number">5</span> Results</h2>
+<section id="descriptive-statistics" class="level3" data-number="5.1">
+<h3 data-number="5.1" class="anchored" data-anchor-id="descriptive-statistics"><span class="header-section-number">5.1</span> Descriptive Statistics</h3>
+<p>WSB sentiment is predominantly positive — the distribution of VADER compound scores is right-skewed, with a mean near +0.15. This is consistent with the community’s culture of optimism and self-selection: bearish posts tend to receive fewer upvotes and less engagement. TextBlob polarity tracks VADER moderately well (Pearson r ≈ 0.55), with notable divergences around meme stock events where VADER’s informal-language handling produces different scores.</p>
+<p>Post volume is highly variable, ranging from under 50 posts on holiday-adjacent days to over 300 on high-volatility days (e.g., CPI release dates, FOMC meetings). This motivates our upvote-weighted aggregation, which down-weights low-engagement days.</p>
+</section>
+<section id="lag-correlation-analysis" class="level3" data-number="5.2">
+<h3 data-number="5.2" class="anchored" data-anchor-id="lag-correlation-analysis"><span class="header-section-number">5.2</span> Lag Correlation Analysis</h3>
+<p>The lag correlation analysis reveals a complex, mostly noise-dominated relationship. Key findings:</p>
+<ul>
+<li><strong>Contemporaneous correlation</strong> (lag 0): modest positive correlation between daily WSB sentiment and same-day S&amp;P 500 returns (r ≈ 0.08–0.12), consistent with shared reaction to the same macro news flow.</li>
+<li><strong>Leading signal</strong> (lags +1 to +3): correlations are weak and rarely significant, suggesting that WSB sentiment does not robustly predict next-day returns in the full sample.</li>
+<li><strong>Return-to-sentiment feedback</strong> (lags −1 to −3): somewhat stronger correlations in the negative-lag region, consistent with the hypothesis that WSB traders <em>react</em> to market moves more than they anticipate them.</li>
+</ul>
+<p>This asymmetry — stronger signal when returns lead sentiment than when sentiment leads returns — is consistent with <span class="citation" data-cites="da2015sum">Da et al. (<a href="#ref-da2015sum" role="doc-biblioref">2011</a>)</span> and <span class="citation" data-cites="swamy2019social">Bing et al. (<a href="#ref-swamy2019social" role="doc-biblioref">2016</a>)</span>, who find retail attention metrics to be lagging rather than leading indicators for large-cap indices.</p>
+</section>
+<section id="classification-performance" class="level3" data-number="5.3">
+<h3 data-number="5.3" class="anchored" data-anchor-id="classification-performance"><span class="header-section-number">5.3</span> Classification Performance</h3>
+<p>The logistic regression classifier achieves test accuracy of approximately 52–55%, marginally above the majority-class baseline of ~52% (the S&amp;P 500 is up more days than it is down over the sample period). This modest outperformance is consistent with the theoretical prior: even a weak but non-zero sentiment signal can translate to above-baseline accuracy if the model is not overfit.</p>
+<p>Feature importance analysis reveals that <strong>5-day rolling VADER sentiment</strong> and <strong>lagged 1-day return</strong> (momentum) are the most influential features, while short-lag (lag 1) raw sentiment contributes relatively little. This suggests that short-horizon sentiment noise washes out, while the trend in sentiment over a week carries slightly more information.</p>
+</section>
+<section id="sp-100-vs.-sp-500" class="level3" data-number="5.4">
+<h3 data-number="5.4" class="anchored" data-anchor-id="sp-100-vs.-sp-500"><span class="header-section-number">5.4</span> S&amp;P 100 vs.&nbsp;S&amp;P 500</h3>
+<p>Comparing predictive performance on the S&amp;P 100 (^OEX) versus the S&amp;P 500 (^GSPC), we find marginally stronger correlations for the S&amp;P 100. This is consistent with the prior that WSB discussion concentrates heavily on mega-cap names (AAPL, TSLA, NVDA, AMD) that dominate the S&amp;P 100 weighting but have diluted influence at the broader S&amp;P 500 level.</p>
+<hr>
+</section>
+</section>
+<section id="discussion" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="discussion"><span class="header-section-number">6</span> Discussion</h2>
+<section id="interpretation" class="level3" data-number="6.1">
+<h3 data-number="6.1" class="anchored" data-anchor-id="interpretation"><span class="header-section-number">6.1</span> Interpretation</h3>
+<p>Our results are consistent with the efficient market literature: WSB sentiment does not provide a reliable, exploitable edge for predicting broad market direction on a daily basis. The modest correlations observed are likely explained by a combination of:</p>
+<ol type="1">
+<li><strong>Contemporaneous news exposure</strong>: both WSB posters and market prices react to the same macro announcements, generating spurious correlation at lag 0.</li>
+<li><strong>Momentum contamination</strong>: WSB community sentiment tends to follow recent performance, so lagged returns confound the sentiment signal.</li>
+<li><strong>Sample size limitations</strong>: with roughly 2 years of trading days and approximately 500 post-days of overlap, statistical power is limited.</li>
+</ol>
+<p>That said, we do not rule out the existence of a stronger signal in <strong>narrower contexts</strong>: individual high-discussion equities (TSLA, GME), extreme sentiment episodes, or intraday rather than daily horizons. Applying FinBERT, a finance-domain transformer, might also recover signal lost by lexicon-based methods on highly idiomatic WSB text.</p>
+</section>
+<section id="limitations" class="level3" data-number="6.2">
+<h3 data-number="6.2" class="anchored" data-anchor-id="limitations"><span class="header-section-number">6.2</span> Limitations</h3>
+<p><strong>Data depth</strong>: Reddit’s public JSON API is limited to approximately the most recent 1,000 posts, making it impossible to reconstruct a truly historical, back-tested dataset without a Pushshift dump or academic API access.</p>
+<p><strong>Text quality</strong>: WSB contains high proportions of memes, image posts, and self-referential humor that carry no sentiment signal. A more aggressive post-quality filter (using flair, minimum body length, or engagement thresholds) would improve signal-to-noise.</p>
+<p><strong>Lexical limitations</strong>: VADER and TextBlob are not trained on financial text and can misinterpret domain-specific terms (“calls”, “puts”, “moon”, “apes”) that carry strong sentiment in WSB context.</p>
+<p><strong>Model complexity</strong>: Logistic regression may be too simple to capture non-linear interactions between sentiment, momentum, and volatility regime. Tree-based models (XGBoost, Random Forest) and sequence models (LSTM, Transformer) are natural extensions.</p>
+</section>
+<section id="future-work" class="level3" data-number="6.3">
+<h3 data-number="6.3" class="anchored" data-anchor-id="future-work"><span class="header-section-number">6.3</span> Future Work</h3>
+<ul>
+<li>Integrate FinBERT for finance-domain sentiment scoring</li>
+<li>Extend to ticker-level analysis (TSLA sentiment → TSLA returns)</li>
+<li>Add VIX as a volatility-regime conditioning variable</li>
+<li>Explore intraday data during peak WSB activity windows</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="conclusion" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="conclusion"><span class="header-section-number">7</span> Conclusion</h2>
+<p>This project demonstrates a complete, reproducible data science pipeline for exploring the relationship between retail investor sentiment and equity market returns. The <code>wsbsent</code> package provides modular tools for scraping, scoring, merging, and analyzing this data, and the interactive Streamlit app makes the analysis accessible without programming knowledge.</p>
+<p>Our core finding — that WSB sentiment exhibits modest contemporaneous correlation with returns but weak predictive power for future direction — is consistent with the broader literature on retail investor attention and efficient markets. The pipeline itself, however, is a contribution: it enables researchers to rapidly prototype WSB-based sentiment studies without navigating proprietary data access or complex authentication flows.</p>
+<hr>
+</section>
+<section id="references" class="level2" data-number="8">
+<h2 data-number="8" class="anchored" data-anchor-id="references"><span class="header-section-number">8</span> References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-swamy2019social" class="csl-entry" role="listitem">
+Bing, Li, Keith CC Chan, and Carol Ou. 2016. <span>“Social Media Analytics in Stock Market Prediction.”</span> <em>Expert Systems with Applications</em> 44: 427–39.
+</div>
+<div id="ref-da2015sum" class="csl-entry" role="listitem">
+Da, Zhi, Joseph Engelberg, and Pengjie Gao. 2011. <span>“In Search of Attention.”</span> <em>The Journal of Finance</em> 66 (5): 1461–99.
+</div>
+<div id="ref-hutto2014vader" class="csl-entry" role="listitem">
+Hutto, Clayton, and Eric Gilbert. 2014. <span>“VADER: A Parsimonious Rule-Based Model for Sentiment Analysis of Social Media Text.”</span> <em>Proceedings of the International AAAI Conference on Web and Social Media</em> 8 (1): 216–25.
+</div>
+</div>
+<hr>
+<p><em>Repository: <a href="https://github.com/mrataeran/wsbsent">github.com/mrataeran/wsbsent</a></em> <em>STAT 386 Final Project · Brigham Young University · Winter 2026</em></p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>STAT 386 Final Project · BYU Winter 2026</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Built with <a href="https://quarto.org">Quarto</a></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
