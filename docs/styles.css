@@ -1,0 +1,7 @@
+/* wsbsent docs styles */
+body { font-family: "Inter", sans-serif; }
+h1, h2, h3 { color: #2c3e50; }
+code { background: #f4f4f4; border-radius: 3px; padding: 0 4px; }
+pre { background: #f8f9fa; border-left: 3px solid #3498db; }
+table { font-size: 0.9rem; }
+.quarto-title-block .quarto-title { font-size: 2.2rem; font-weight: 700; }

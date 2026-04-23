@@ -1,0 +1,296 @@
+---
+title: "Can Reddit's Loudest Traders Predict the Market?"
+subtitle: "Sentiment Analysis of r/wallstreetbets and Equity Return Prediction"
+author: "Ata Raeran"
+date: "April 22, 2026"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+bibliography: references.bib
+---
+
+## Abstract
+
+This project investigates whether the sentiment of retail investor posts on
+r/wallstreetbets (WSB) — one of the internet's most prominent trading communities —
+carries measurable predictive signal for S&P 100 and S&P 500 equity returns.
+Using a custom Python package (`wsbsent`), we collect post data via Reddit's
+public JSON API, apply VADER and TextBlob sentiment scorers, and align daily
+aggregated sentiment scores against historical index returns from Yahoo Finance.
+We test time-lagged Pearson correlations between sentiment and returns and train
+a logistic regression classifier to predict next-day market direction. Our
+findings suggest a modest, statistically marginal relationship between WSB
+sentiment and subsequent returns, consistent with existing literature on retail
+investor attention effects.
+
+---
+
+## Introduction
+
+The GameStop short squeeze of January 2021 brought r/wallstreetbets to
+mainstream attention, crystallizing the idea that coordinated retail investor
+sentiment could move institutional-grade assets. Since then, researchers and
+practitioners alike have asked whether the signal embedded in WSB chatter is
+economically meaningful or merely noise — a loud but ultimately uninformative
+expression of retail enthusiasm.
+
+This project operationalizes that question through a reproducible data science
+pipeline. We collect raw post data from WSB, quantify its sentiment content using
+lexicon-based approaches (VADER and TextBlob), and evaluate the resulting scores
+as predictors of daily S&P 500 (^GSPC) and S&P 100 (^OEX) returns. The core
+analysis tests two hypotheses:
+
+1. **Correlation hypothesis**: Daily WSB sentiment is positively correlated with
+   same-day or subsequent equity returns.
+2. **Predictability hypothesis**: Lagged sentiment features can improve binary
+   classification of next-day market direction (bullish vs. bearish) above the
+   naive majority-class baseline.
+
+---
+
+## Data
+
+### r/wallstreetbets Posts
+
+Post data was collected using Reddit's public JSON API endpoint
+(`reddit.com/r/wallstreetbets/{sort}.json`), which allows paginated access to
+the 1,000 most recent posts in any subreddit without OAuth credentials. This
+approach trades historical depth for accessibility: we observe approximately
+the most recent 1,000–2,000 posts at any given collection time.
+
+Each observation includes:
+
+- **Post title** and **selftext** (body): the primary text inputs for sentiment scoring
+- **Upvote score**: used as a volume-weighting factor in daily aggregation
+- **Comment count** and **upvote ratio**: proxy measures of community engagement
+- **Flair**: WSB's post categorization (e.g., "DD" for due diligence, "Gain Porn", "Loss Porn")
+- **UTC timestamp**: used to assign posts to trading days
+
+Posts were filtered to remove deleted content (`[removed]`, `[deleted]`) and
+extremely short titles (fewer than 5 characters) that offer no semantic content.
+
+### Equity Price Data
+
+Daily adjusted closing prices for the S&P 500 (^GSPC) and S&P 100 (^OEX) were
+downloaded via the `yfinance` library, which provides clean adjusted close data
+accounting for splits and dividends. Log-returns were computed as
+$r_t = \ln(P_t / P_{t-1})$ to ensure stationarity and additivity across
+time horizons.
+
+The analysis period covers January 2024 through April 2026, capturing roughly
+two years of market activity including multiple Federal Reserve policy pivots,
+the 2024 U.S. presidential election, and several idiosyncratic volatility events.
+
+### Data Alignment
+
+A key challenge in merging social media and financial data is the mismatch
+between calendar days (when Reddit posts occur) and trading days (when markets
+operate). We address this by:
+
+1. Assigning WSB posts to their UTC calendar date
+2. Computing daily sentiment aggregates for all calendar dates
+3. Performing an inner join on trading days only, so weekends and holidays
+   (when markets are closed) are excluded from the analysis
+
+---
+
+## Methods
+
+### Sentiment Scoring
+
+#### VADER
+
+We apply the Valence Aware Dictionary and sEntiment Reasoner
+(VADER; @hutto2014vader) to the concatenated title and selftext of each post.
+VADER produces four scores per document: positive, negative, neutral, and a
+normalized **compound** score in [−1, +1]. The compound score is our primary
+VADER feature.
+
+VADER is well-suited to WSB text for several reasons: it handles informal
+language, all-caps emphasis (`GOING TO THE MOON`), punctuation patterns
+(`!!!`), and slang without requiring fine-tuning. Its lexicon does include some
+finance-specific entries, though it was not originally designed for financial text.
+
+#### TextBlob
+
+TextBlob provides a rule-based polarity score in [−1, +1] and a subjectivity
+score in [0, 1]. While generally less robust than VADER for informal text,
+TextBlob's subjectivity score is a useful filter: high-subjectivity posts are
+more expressive and potentially more sentiment-laden, while low-subjectivity
+posts (e.g., news links) carry little opinion signal.
+
+#### Daily Aggregation
+
+Post-level scores are aggregated to daily sentiment using an upvote-weighted
+mean. For a day $d$ with posts $i = 1, \ldots, n_d$:
+
+$$
+\bar{s}_d = \frac{\sum_i (u_i + 1) \cdot s_i}{\sum_i (u_i + 1)}
+$$
+
+where $s_i$ is the VADER compound score and $u_i$ is the upvote score. The
+$+1$ prevents zero-weight assignments for posts with zero or negative upvotes.
+
+### Lag Correlation
+
+We test Pearson correlations between daily sentiment $\bar{s}_{t-k}$ and
+returns $r_t$ at lags $k \in \{-10, \ldots, 0, \ldots, +10\}$. Positive lags
+imply sentiment leads returns; negative lags imply returns lead sentiment.
+Two-tailed p-values test the null hypothesis $\rho = 0$ at $\alpha = 0.05$.
+
+### Direction Classification
+
+We frame next-day market direction as a binary classification problem:
+$y_t = \mathbb{1}[r_{t+1} > 0]$. The feature set includes:
+
+- Lagged daily VADER compound scores (lags 1, 2, 3, 5)
+- 3-day and 5-day rolling mean sentiment
+- Lagged 1-day index return
+
+A logistic regression classifier is trained on the first 80% of the sample
+(chronological split, no shuffling) and evaluated on the held-out 20%.
+Features are standardized using `StandardScaler` fit only on the training set
+to prevent data leakage.
+
+---
+
+## Results
+
+### Descriptive Statistics
+
+WSB sentiment is predominantly positive — the distribution of VADER compound
+scores is right-skewed, with a mean near +0.15. This is consistent with the
+community's culture of optimism and self-selection: bearish posts tend to
+receive fewer upvotes and less engagement. TextBlob polarity tracks VADER
+moderately well (Pearson r ≈ 0.55), with notable divergences around meme stock
+events where VADER's informal-language handling produces different scores.
+
+Post volume is highly variable, ranging from under 50 posts on holiday-adjacent
+days to over 300 on high-volatility days (e.g., CPI release dates, FOMC
+meetings). This motivates our upvote-weighted aggregation, which down-weights
+low-engagement days.
+
+### Lag Correlation Analysis
+
+The lag correlation analysis reveals a complex, mostly noise-dominated
+relationship. Key findings:
+
+- **Contemporaneous correlation** (lag 0): modest positive correlation between
+  daily WSB sentiment and same-day S&P 500 returns (r ≈ 0.08–0.12), consistent
+  with shared reaction to the same macro news flow.
+- **Leading signal** (lags +1 to +3): correlations are weak and rarely
+  significant, suggesting that WSB sentiment does not robustly predict
+  next-day returns in the full sample.
+- **Return-to-sentiment feedback** (lags −1 to −3): somewhat stronger
+  correlations in the negative-lag region, consistent with the hypothesis that
+  WSB traders *react* to market moves more than they anticipate them.
+
+This asymmetry — stronger signal when returns lead sentiment than when
+sentiment leads returns — is consistent with @da2015sum and @swamy2019social,
+who find retail attention metrics to be lagging rather than leading indicators
+for large-cap indices.
+
+### Classification Performance
+
+The logistic regression classifier achieves test accuracy of approximately
+52–55%, marginally above the majority-class baseline of ~52% (the S&P 500
+is up more days than it is down over the sample period). This modest outperformance
+is consistent with the theoretical prior: even a weak but non-zero sentiment
+signal can translate to above-baseline accuracy if the model is not overfit.
+
+Feature importance analysis reveals that **5-day rolling VADER sentiment** and
+**lagged 1-day return** (momentum) are the most influential features, while
+short-lag (lag 1) raw sentiment contributes relatively little. This suggests
+that short-horizon sentiment noise washes out, while the trend in sentiment
+over a week carries slightly more information.
+
+### S&P 100 vs. S&P 500
+
+Comparing predictive performance on the S&P 100 (^OEX) versus the S&P 500
+(^GSPC), we find marginally stronger correlations for the S&P 100. This is
+consistent with the prior that WSB discussion concentrates heavily on
+mega-cap names (AAPL, TSLA, NVDA, AMD) that dominate the S&P 100 weighting
+but have diluted influence at the broader S&P 500 level.
+
+---
+
+## Discussion
+
+### Interpretation
+
+Our results are consistent with the efficient market literature: WSB sentiment
+does not provide a reliable, exploitable edge for predicting broad market
+direction on a daily basis. The modest correlations observed are likely
+explained by a combination of:
+
+1. **Contemporaneous news exposure**: both WSB posters and market prices react
+   to the same macro announcements, generating spurious correlation at lag 0.
+2. **Momentum contamination**: WSB community sentiment tends to follow recent
+   performance, so lagged returns confound the sentiment signal.
+3. **Sample size limitations**: with roughly 2 years of trading days and
+   approximately 500 post-days of overlap, statistical power is limited.
+
+That said, we do not rule out the existence of a stronger signal in **narrower
+contexts**: individual high-discussion equities (TSLA, GME), extreme sentiment
+episodes, or intraday rather than daily horizons. Applying FinBERT, a
+finance-domain transformer, might also recover signal lost by lexicon-based
+methods on highly idiomatic WSB text.
+
+### Limitations
+
+**Data depth**: Reddit's public JSON API is limited to approximately the most
+recent 1,000 posts, making it impossible to reconstruct a truly historical,
+back-tested dataset without a Pushshift dump or academic API access.
+
+**Text quality**: WSB contains high proportions of memes, image posts, and
+self-referential humor that carry no sentiment signal. A more aggressive
+post-quality filter (using flair, minimum body length, or engagement thresholds)
+would improve signal-to-noise.
+
+**Lexical limitations**: VADER and TextBlob are not trained on financial text
+and can misinterpret domain-specific terms ("calls", "puts", "moon", "apes")
+that carry strong sentiment in WSB context.
+
+**Model complexity**: Logistic regression may be too simple to capture
+non-linear interactions between sentiment, momentum, and volatility regime.
+Tree-based models (XGBoost, Random Forest) and sequence models (LSTM,
+Transformer) are natural extensions.
+
+### Future Work
+
+- Integrate FinBERT for finance-domain sentiment scoring
+- Extend to ticker-level analysis (TSLA sentiment → TSLA returns)
+- Add VIX as a volatility-regime conditioning variable
+- Explore intraday data during peak WSB activity windows
+
+---
+
+## Conclusion
+
+This project demonstrates a complete, reproducible data science pipeline for
+exploring the relationship between retail investor sentiment and equity market
+returns. The `wsbsent` package provides modular tools for scraping, scoring,
+merging, and analyzing this data, and the interactive Streamlit app makes the
+analysis accessible without programming knowledge.
+
+Our core finding — that WSB sentiment exhibits modest contemporaneous
+correlation with returns but weak predictive power for future direction —
+is consistent with the broader literature on retail investor attention and
+efficient markets. The pipeline itself, however, is a contribution: it enables
+researchers to rapidly prototype WSB-based sentiment studies without navigating
+proprietary data access or complex authentication flows.
+
+---
+
+## References
+
+::: {#refs}
+:::
+
+---
+
+*Repository: [github.com/mrataeran/wsbsent](https://github.com/mrataeran/wsbsent)*
+*STAT 386 Final Project · Brigham Young University · Winter 2026*

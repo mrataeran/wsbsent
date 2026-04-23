@@ -1,0 +1,226 @@
+---
+title: "Tutorial: End-to-End WSB Sentiment Pipeline"
+---
+
+This tutorial walks you through the complete `wsbsent` pipeline from raw
+Reddit posts to a trained market direction classifier.
+
+## 0. Setup
+
+```bash
+pip install git+https://github.com/mrataeran/wsbsent.git
+```
+
+Or install from source:
+
+```bash
+git clone https://github.com/mrataeran/wsbsent.git
+cd wsbsent
+pip install -e ".[dev]"
+```
+
+---
+
+## 1. Collect WSB Posts
+
+The `scrape_wsb` function uses Reddit's **public JSON API** — no developer
+account or OAuth token required. Each page returns up to 100 posts.
+
+```python
+from wsbsent import scrape_wsb
+
+# Fetch 500 posts from the 'new' feed
+posts = scrape_wsb(sort="new", pages=5)
+
+print(posts.shape)          # (500, 10)
+print(posts.columns.tolist())
+# ['post_id', 'title', 'selftext', 'score', 'num_comments',
+#  'upvote_ratio', 'created_utc', 'date', 'flair', 'url']
+
+posts.head(3)[["title", "score", "date"]]
+```
+
+**Rate limiting:** A `sleep=1.5` second pause is inserted between pages to
+respect Reddit's anonymous API rate limits. For large scrapes, increase
+`sleep` to 2.0.
+
+---
+
+## 2. Score Sentiment
+
+```python
+from wsbsent import score_posts
+
+scored = score_posts(posts, method="both")
+
+# New columns added:
+# vader_compound, vader_pos, vader_neg, vader_neu
+# tb_polarity, tb_subjectivity
+
+scored[["title", "vader_compound", "tb_polarity"]].head()
+```
+
+**VADER** (Valence Aware Dictionary and sEntiment Reasoner) is optimized
+for short, informal text — making it well suited for WSB titles. Scores
+range from −1 (most negative) to +1 (most positive).
+
+**TextBlob** provides both polarity (−1 to +1) and subjectivity (0 to 1),
+useful for filtering out objective/factual posts from sentiment analysis.
+
+---
+
+## 3. Aggregate to Daily Scores
+
+Individual post scores are noisy. We aggregate them to a daily average,
+volume-weighted by upvote score so that high-engagement posts carry more
+weight.
+
+```python
+from wsbsent import aggregate_daily_sentiment
+
+daily = aggregate_daily_sentiment(scored, weight_col="score")
+
+daily.head()
+#            vader_compound  vader_pos  ...  post_count  total_score
+# date
+# 2024-01-02        0.1342      0.183  ...          47        12432
+# 2024-01-03       -0.0521      0.142  ...          63         8901
+```
+
+---
+
+## 4. Fetch Price Data
+
+```python
+from wsbsent import get_prices, get_returns
+
+prices = get_prices(tickers=["^GSPC", "^OEX"], start="2024-01-01")
+returns = get_returns(prices)   # log-returns by default
+
+returns.tail()
+```
+
+`^GSPC` is the S&P 500 index; `^OEX` is the S&P 100. You can pass any
+valid Yahoo Finance ticker symbol.
+
+---
+
+## 5. Merge and Visualize
+
+```python
+from wsbsent import merge_sentiment_prices, plot_sentiment_returns
+import matplotlib.pyplot as plt
+
+merged = merge_sentiment_prices(daily, returns)
+
+fig = plot_sentiment_returns(
+    merged,
+    sentiment_col="vader_compound",
+    return_col="^GSPC",
+)
+plt.show()
+```
+
+The dual-axis chart displays cumulative log-returns as a line on the left
+axis, with daily sentiment bars (green = positive, red = negative) on the
+right axis.
+
+---
+
+## 6. Lag Correlation Analysis
+
+Does WSB sentiment *lead* returns, or do returns drive sentiment?
+
+```python
+from wsbsent import lagged_correlation, plot_correlation_heatmap
+
+lag_df = lagged_correlation(
+    merged,
+    sentiment_col="vader_compound",
+    return_col="^GSPC",
+    max_lag=10,
+)
+
+# Positive lags: sentiment leads returns
+# Negative lags: returns lead sentiment
+lag_df[lag_df["significant"]]
+
+fig = plot_correlation_heatmap(lag_df)
+plt.show()
+```
+
+Bars marked with `*` indicate p < 0.05 (two-tailed Pearson test).
+
+---
+
+## 7. Build Classification Features
+
+```python
+from wsbsent import build_features
+
+features = build_features(
+    merged,
+    lags=[1, 2, 3, 5],
+    rolling_windows=[3, 5],
+    target_col="^GSPC",
+    horizon=1,              # predict next-day direction
+)
+
+print(features["target"].value_counts())
+# 1    132   (bullish days)
+# 0    118   (bearish days)
+```
+
+The `build_features` function engineers:
+- Lagged sentiment scores (t−1, t−2, t−3, t−5)
+- Rolling mean sentiment (3-day, 5-day)
+- Lagged 1-day returns
+
+---
+
+## 8. Train the Direction Classifier
+
+```python
+from wsbsent import classify_direction, plot_confusion, plot_feature_importance
+
+results = classify_direction(features, target_col="target")
+
+print(f"Test accuracy: {results['accuracy']:.1%}")
+
+fig_cm = plot_confusion(results["confusion"], results["accuracy"])
+fig_fi = plot_feature_importance(results["feature_importance"])
+plt.show()
+```
+
+The model uses logistic regression with `StandardScaler` normalization and
+a **chronological** train/test split (no shuffle, preserving time order to
+avoid look-ahead bias).
+
+---
+
+## 9. Run the Streamlit App
+
+```bash
+streamlit run app/streamlit_app.py
+```
+
+The interactive dashboard lets you:
+- Select any ticker from the S&P 100 universe
+- Choose a date range
+- Toggle between VADER, TextBlob, or both
+- Explore all charts and raw data tables interactively
+
+---
+
+## 10. CLI Pipeline
+
+For batch processing:
+
+```bash
+python scripts/clean_data.py \
+    --pages 10 \
+    --start 2024-01-01 \
+    --tickers "^GSPC" "^OEX" "AAPL" "MSFT" \
+    --method both \
+    --out data/
+```

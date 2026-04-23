@@ -1,0 +1,105 @@
+---
+title: "wsbsent"
+subtitle: "Sentiment Analysis of r/wallstreetbets and Equity Return Prediction"
+---
+
+## Overview
+
+**wsbsent** is a Python package for investigating whether retail investor
+sentiment — as expressed on r/wallstreetbets — contains measurable predictive
+signal for S&P 100 and S&P 500 equity returns.
+
+The package covers the complete data science pipeline:
+
+| Stage | Module | Description |
+|---|---|---|
+| Collection | `collect.py` | Scrape WSB via Reddit public JSON API |
+| Scoring | `sentiment.py` | VADER + TextBlob sentiment scoring |
+| Prices | `prices.py` | yfinance OHLCV + log-return calculation |
+| Wrangling | `wrangling.py` | Merge, lag features, classification target |
+| Analysis | `analysis.py` | Lagged Pearson correlation + logistic regression |
+| Visualization | `visualize.py` | Time series, lag charts, confusion matrices |
+
+## Installation
+
+```bash
+pip install git+https://github.com/mrataeran/wsbsent.git
+```
+
+## Navigation
+
+- [**Tutorial**](tutorial.qmd) — step-by-step walkthrough of the full pipeline
+- [**Report**](report.qmd) — written project report (STAT 386 final deliverable)
+
+## API Reference
+
+### `wsbsent.collect`
+
+**`scrape_wsb(sort, pages, sleep)`**
+: Scrape r/wallstreetbets posts using the public Reddit JSON endpoint.
+  No API credentials required. Returns a `pd.DataFrame` with columns
+  `post_id`, `title`, `selftext`, `score`, `num_comments`, `date`, `flair`.
+
+**`load_posts(path)`**
+: Load a previously saved posts CSV.
+
+---
+
+### `wsbsent.sentiment`
+
+**`score_posts(df, text_col, include_selftext, method)`**
+: Apply VADER and/or TextBlob to post text. Returns original DataFrame with
+  added columns `vader_compound`, `vader_pos`, `vader_neg`, `vader_neu`,
+  `tb_polarity`, `tb_subjectivity`.
+
+**`aggregate_daily_sentiment(scored, date_col, weight_col)`**
+: Volume-weighted aggregation of post-level scores to daily granularity.
+
+---
+
+### `wsbsent.prices`
+
+**`get_prices(tickers, start, end, interval)`**
+: Download adjusted close prices via `yfinance`.
+
+**`get_returns(prices, log)`**
+: Compute daily log-returns or simple returns from a prices DataFrame.
+
+---
+
+### `wsbsent.wrangling`
+
+**`merge_sentiment_prices(sentiment, returns, how)`**
+: Align daily sentiment and return DataFrames by date.
+
+**`build_features(merged, sentiment_cols, lags, rolling_windows, target_col, horizon)`**
+: Engineer lagged and rolling features; append a binary `target` column
+  (1 = next-day return > 0).
+
+---
+
+### `wsbsent.analysis`
+
+**`lagged_correlation(merged, sentiment_col, return_col, max_lag)`**
+: Compute Pearson r and p-values at lags from `−max_lag` to `+max_lag`.
+
+**`classify_direction(features, feature_cols, target_col, test_size)`**
+: Train a logistic regression classifier with a chronological train/test
+  split. Returns accuracy, classification report, confusion matrix, and
+  feature importances.
+
+---
+
+### `wsbsent.visualize`
+
+**`plot_sentiment_returns(merged, sentiment_col, return_col)`**
+: Dual-axis chart: cumulative return (line) + daily sentiment (bars).
+
+**`plot_correlation_heatmap(lag_df)`**
+: Bar chart of lagged Pearson correlations with significance markers.
+
+**`plot_confusion(confusion, accuracy)`**
+: Seaborn heatmap confusion matrix.
+
+**`plot_feature_importance(importance, top_n)`**
+: Horizontal bar chart of top logistic regression feature coefficients.

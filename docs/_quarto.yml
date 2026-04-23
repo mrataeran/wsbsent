@@ -1,0 +1,32 @@
+project:
+  type: website
+  output-dir: _site
+
+website:
+  title: "wsbsent"
+  description: "Sentiment Analysis of r/wallstreetbets and Equity Return Prediction"
+  favicon: ""
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: tutorial.qmd
+        text: Tutorial
+      - href: report.qmd
+        text: Report
+    right:
+      - icon: github
+        href: https://github.com/mrataeran/wsbsent
+
+  page-footer:
+    left: "STAT 386 Final Project · BYU Winter 2026"
+    right: "Built with [Quarto](https://quarto.org)"
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 3
+    code-fold: true
+    highlight-style: github
+    css: styles.css

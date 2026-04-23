@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wsbsent"
+version = "0.1.0"
+description = "Sentiment analysis of r/wallstreetbets and equity return prediction"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Ata Raeran", email = "mrataeran@byu.edu" }]
+keywords = ["sentiment", "finance", "NLP", "reddit", "wallstreetbets", "stocks"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Education",
+    "Topic :: Office/Business :: Financial",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    "requests>=2.31",
+    "pandas>=2.0",
+    "numpy>=1.26",
+    "yfinance>=0.2.40",
+    "vaderSentiment>=3.3.2",
+    "textblob>=0.18",
+    "scikit-learn>=1.4",
+    "scipy>=1.12",
+    "matplotlib>=3.8",
+    "seaborn>=0.13",
+    "streamlit>=1.35",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "black",
+    "ruff",
+    "jupyter",
+    "quarto",
+]
+
+[project.urls]
+Homepage = "https://github.com/mrataeran/wsbsent"
+Documentation = "https://mrataeran.github.io/wsbsent"
+Repository = "https://github.com/mrataeran/wsbsent"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["wsbsent*"]
+
+[tool.black]
+line-length = 90
+target-version = ["py310"]
+
+[tool.ruff]
+line-length = 90
+select = ["E", "F", "W", "I"]
