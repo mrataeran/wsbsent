@@ -1,9 +1,9 @@
 """
 collect.py
 ----------
-Scrape posts and comments from r/wallstreetbets using Reddit's public JSON API.
-No API credentials required, uses the public .json endpoint with a rate-limited
-request loop.
+Scrape posts from r/wallstreetbets using the Arctic Shift API
+(https://arctic-shift.photon-reddit.com). No API credentials required.
+Supports pagination via timestamp-based cursoring.
 """
 
 import time
@@ -12,197 +12,98 @@ import requests
 import pandas as pd
 import numpy as np
 
-HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/124.0.0.0 Safari/537.36"
-    ),
-    "Accept": "application/json",
-    "Accept-Language": "en-US,en;q=0.9",
-}
-BASE_URL = "https://www.reddit.com/r/wallstreetbets/{sort}.json"
-
-_SAMPLE_TITLES = [
-    "YOLO'd my life savings into TSLA calls, up 300% 🚀🚀🚀",
-    "SPY puts printing, bears eating today",
-    "Why NVDA is going to $1000, my DD",
-    "Lost $50k on GME this week, back to zero",
-    "Fed pivot incoming? Loading up on QQQ calls",
-    "AAPL earnings play, what's your thesis?",
-    "This market is completely rigged, change my mind",
-    "AMD going to crush earnings tomorrow, technical breakdown",
-    "Closed my short position, taking small loss. Not worth it.",
-    "PLTR to the moon, robots will rule the world",
-    "Bear market incoming? Here's why I'm buying puts",
-    "My MSFT call spread just doubled, staying in",
-    "Sold everything Friday, cash gang until fed meeting",
-    "Meme stocks back? AMC and GME spiking pre-market",
-    "Rate cut bets crumbling, market overreaction or justified?",
-    "Options expiration Friday, expect volatility",
-    "First green day in 2 weeks, bulls finally showing up",
-    "RIVN down 15%, loading more puts",
-    "Bought the dip on COIN, already up 8%",
-    "SPY hitting resistance at 520, watching for rejection",
-]
-_FLAIRS = ["DD", "Gain Porn", "Loss Porn", "Discussion", "Meme", "News", "YOLO", ""]
+ARCTIC_SHIFT_URL = "https://arctic-shift.photon-reddit.com/api/posts/search"
+HEADERS = {"User-Agent": "wsbsent/0.1.0 (academic research project)"}
 
 
 def scrape_wsb(
     sort: str = "new",
     pages: int = 10,
-    sleep: float = 1.5,
+    sleep: float = 1.0,
+    after: str | None = None,
+    before: str | None = None,
 ) -> pd.DataFrame:
-    """Scrape r/wallstreetbets posts via the public Reddit JSON API.
+    """Scrape r/wallstreetbets posts via the Arctic Shift API.
 
     Parameters
     ----------
     sort : str
-        Feed to scrape. One of ``'new'``, ``'hot'``, ``'top'``.
+        Sort order. One of 'new', 'top', 'controversial'.
     pages : int
         Number of paginated requests (each returns up to 100 posts).
-        ``pages=10`` yields up to 1,000 posts.
     sleep : float
-        Seconds to wait between requests to avoid rate-limiting.
+        Seconds to wait between requests.
+    after : str, optional
+        ISO date string (e.g. '2024-01-01') to fetch posts after this date.
+    before : str, optional
+        ISO date string to fetch posts before this date.
 
     Returns
     -------
     pd.DataFrame
-        Columns: ``post_id``, ``title``, ``selftext``, ``score``,
-        ``num_comments``, ``upvote_ratio``, ``created_utc``, ``date``,
-        ``flair``, ``url``.
-
-    Examples
-    --------
-    >>> df = scrape_wsb(sort="new", pages=3)
-    >>> df.shape
-    (300, 10)
+        Columns: post_id, title, selftext, score,
+        num_comments, upvote_ratio, created_utc, date,
+        flair, url.
     """
-    url = BASE_URL.format(sort=sort)
-    params: dict = {"limit": 100}
     records = []
-    after = None
+    params = {
+        "subreddit": "wallstreetbets",
+        "limit": 100,
+        "sort": "desc" if sort == "new" else sort,
+    }
+    if after:
+        params["after"] = after
+    if before:
+        params["before"] = before
+
+    oldest_utc = None  # used as cursor for pagination
 
     for page in range(pages):
-        if after:
-            params["after"] = after
+        if oldest_utc is not None:
+            params["before"] = oldest_utc
+
         try:
-            resp = requests.get(url, headers=HEADERS, params=params, timeout=15)
+            resp = requests.get(
+                ARCTIC_SHIFT_URL, headers=HEADERS, params=params, timeout=15
+            )
             resp.raise_for_status()
         except requests.RequestException as exc:
-            print(f"[collect] Request failed on page {page}: {exc}")
+            print(f"[collect] Arctic Shift request failed on page {page}: {exc}")
             break
 
-        data = resp.json().get("data", {})
-        children = data.get("children", [])
-        if not children:
+        posts = resp.json().get("data", [])
+        if not posts:
             break
 
-        for child in children:
-            post = child.get("data", {})
+        for post in posts:
             created = post.get("created_utc", 0)
-            records.append(
-                {
-                    "post_id": post.get("id", ""),
-                    "title": post.get("title", ""),
-                    "selftext": post.get("selftext", ""),
-                    "score": post.get("score", 0),
-                    "num_comments": post.get("num_comments", 0),
-                    "upvote_ratio": post.get("upvote_ratio", 0.5),
-                    "created_utc": created,
-                    "date": datetime.datetime.utcfromtimestamp(created).date()
-                    if created
-                    else None,
-                    "flair": post.get("link_flair_text", ""),
-                    "url": post.get("url", ""),
-                }
-            )
+            try:
+                created = int(created)
+            except (ValueError, TypeError):
+                created = 0
+            date = datetime.datetime.utcfromtimestamp(created).date() if created else None
+            records.append({
+                "post_id": post.get("id", ""),
+                "title": post.get("title", ""),
+                "selftext": post.get("selftext", ""),
+                "score": post.get("score", 0),
+                "num_comments": post.get("num_comments", 0),
+                "upvote_ratio": post.get("upvote_ratio", 0.5),
+                "created_utc": created,
+                "date": date,
+                "flair": post.get("link_flair_text", ""),
+                "url": post.get("url", ""),
+            })
 
-        after = data.get("after")
-        if not after:
-            break
+        # Cursor: oldest timestamp in this batch becomes the next before= value
+        oldest_utc = min(p.get("created_utc", 0) for p in posts)
         time.sleep(sleep)
 
     df = pd.DataFrame(records)
-    if not df.empty and "date" in df.columns:
+    if not df.empty:
         df["date"] = pd.to_datetime(df["date"])
-        df = df.sort_values("date").reset_index(drop=True)
+        df = df.drop_duplicates(subset="post_id").sort_values("date").reset_index(drop=True)
     return df
-
-
-def generate_sample_data(
-    n_days: int = 90,
-    posts_per_day: tuple = (40, 150),
-    start: str = "2024-01-01",
-    seed: int = 42,
-) -> pd.DataFrame:
-    """Generate realistic synthetic WSB post data for testing and demos.
-
-    Produces a DataFrame with the same schema as :func:`scrape_wsb` so that
-    all downstream modules work identically with synthetic or real data.
-
-    Parameters
-    ----------
-    n_days : int
-        Number of calendar days to simulate.
-    posts_per_day : tuple
-        ``(min, max)`` range for daily post counts.
-    start : str
-        Start date for the synthetic dataset.
-    seed : int
-        Random seed for reproducibility.
-
-    Returns
-    -------
-    pd.DataFrame
-        Synthetic posts with realistic sentiment variation and volume patterns.
-    """
-    import random
-    import string
-
-    rng = random.Random(seed)
-    np.random.seed(seed)
-
-    start_dt = pd.Timestamp(start)
-    records = []
-
-    for day_offset in range(n_days):
-        date = start_dt + pd.Timedelta(days=day_offset)
-        n_posts = rng.randint(*posts_per_day)
-        # Inject a sentiment trend: slight drift + random noise
-        day_bias = np.sin(day_offset / 15) * 0.1  # gentle cyclic bias
-
-        for _ in range(n_posts):
-            title_idx = rng.randint(0, len(_SAMPLE_TITLES) - 1)
-            base_title = _SAMPLE_TITLES[title_idx]
-            # Add ticker noise
-            tickers = ["TSLA", "AAPL", "NVDA", "SPY", "QQQ", "AMD", "MSFT", "GME"]
-            title = base_title.replace(
-                rng.choice(["TSLA", "NVDA", "AAPL"]),
-                rng.choice(tickers),
-            )
-            score = max(0, int(np.random.lognormal(5, 1.5)))
-            uid = "".join(rng.choices(string.ascii_lowercase + string.digits, k=6))
-            ts = date.timestamp() + rng.randint(0, 86399)
-            records.append(
-                {
-                    "post_id": uid,
-                    "title": title,
-                    "selftext": "",
-                    "score": score,
-                    "num_comments": max(0, int(score * rng.uniform(0.1, 0.8))),
-                    "upvote_ratio": round(rng.uniform(0.55, 0.98), 2),
-                    "created_utc": ts,
-                    "date": date.normalize(),
-                    "flair": rng.choice(_FLAIRS),
-                    "url": f"https://reddit.com/r/wallstreetbets/comments/{uid}",
-                }
-            )
-
-    df = pd.DataFrame(records)
-    df["date"] = pd.to_datetime(df["date"])
-    return df.sort_values("date").reset_index(drop=True)
-
 
 def load_posts(path: str) -> pd.DataFrame:
     """Load a previously saved posts CSV.
