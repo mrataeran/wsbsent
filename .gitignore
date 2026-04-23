@@ -6,9 +6,9 @@ build/
 .eggs/
 *.egg
 
-# data outputs (too large for Git)
-data/*.csv
-data/*.parquet
+# # data outputs (too large for Git)
+# data/*.csv
+# data/*.parquet
 
 
 # environment
